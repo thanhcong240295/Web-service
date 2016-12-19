@@ -1,5 +1,5 @@
 <?php
-	header('Content-type: text/html; charset=utf-8');
+	header('Content-type: application/json');
 	$url= 'http://regis.agu.edu.vn/default.aspx?page=dangnhap';
 
 	$user = 'ctl00$ContentPlaceHolder1$ctl00$txtTaiKhoa';
@@ -43,7 +43,7 @@
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $postData);
 	curl_setopt($ch, CURLOPT_URL, $url);   
 	curl_setopt($ch, CURLOPT_COOKIEJAR, $cookies); 
-	curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSSIE 5.01; Windows NT 5.0)");
+	//curl_setopt($ch, CURLOPT_COOKIEFILE, $cookies);
 	
 	curl_exec($ch);
 	curl_setopt($ch, CURLOPT_URL, 'http://regis.agu.edu.vn/Default.aspx?page=xemdiemthi');
@@ -51,13 +51,42 @@
 	$data = curl_exec($ch);
 
 	curl_setOpt($ch, CURLOPT_POST, false);    
-	
+	$data = curl_exec($ch);
+
 	//echo $data;	
+	curl_close($ch);
+	echo $data;
 	$html=new DOMDocument();
 	$data = '<?xml encoding="utf-8" ?>' . $data;
 	libxml_use_internal_errors(true);
 	$html->loadHTML($data);
+	//echo $html->saveXML();
 	$finder = new DomXPath($html);
-
-	curl_close($ch);
+	$arr=$finder->query("//*[contains(@class, 'grid-view')]");
+	$jsonArray=array();
+	foreach($arr as $item){
+		$cols =$item->getElementsByTagName("tr");
+		foreach ($cols as $a) {
+			$cols =$a->getElementsByTagName("span");
+			if(empty($cols->item(1)->nodeValue))
+			{
+				$row=array('MMH'=>"",'TenMH'=>"",'TietBD'=>"",'SoTiet'=>"",'NgayThi'=>"1-1-1900",'PhongThi'=>'');
+			}
+			else
+			{
+				
+				preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/",$cols->item(6)->nodeValue,$match);
+				if($match==null){
+					exit("Error");
+				}
+				
+				$newDate = date("d-m-Y", strtotime($cols->item(6)->nodeValue));
+				$row=array('MMH'=>$cols->item(1)->nodeValue,'TenMH'=>$cols->item(2)->nodeValue,'TietBD'=>$cols->item(7)->nodeValue,'SoTiet'=>$cols->item(8)->nodeValue,'PhongThi'=>$cols->item(9)->nodeValue,'NgayThi'=>$newDate);
+				$jsonArray[]=$row;
+			}
+			
+		}
+		
+	}
+	echo(json_encode($jsonArray));	
 ?>	

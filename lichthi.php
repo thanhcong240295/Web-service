@@ -70,13 +70,21 @@
 			$cols =$a->getElementsByTagName("span");
 			if(empty($cols->item(1)->nodeValue))
 			{
-				$row;
+				$row=array('MMH'=>"",'TenMH'=>"",'TietBD'=>"",'SoTiet'=>"",'NgayThi'=>"1-1-1900",'PhongThi'=>'');
 			}
 			else
 			{
-				$row=array('MMH'=>$cols->item(1)->nodeValue,'TenMH'=>$cols->item(2)->nodeValue,'NgayThi'=>$cols->item(6)->nodeValue);
+				
+				preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/",$cols->item(6)->nodeValue,$match);
+				if($match==null){
+					exit("Error");
+				}
+				
+				$newDate = date("d-m-Y", strtotime($cols->item(6)->nodeValue));
+				$row=array('MMH'=>$cols->item(1)->nodeValue,'TenMH'=>$cols->item(2)->nodeValue,'TietBD'=>$cols->item(7)->nodeValue,'SoTiet'=>$cols->item(8)->nodeValue,'PhongThi'=>$cols->item(9)->nodeValue,'NgayThi'=>$newDate);
+				$jsonArray[]=$row;
 			}
-			$jsonArray[]=$row;
+			
 		}
 		
 	}
