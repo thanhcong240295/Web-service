@@ -46,7 +46,7 @@
 	//curl_setopt($ch, CURLOPT_COOKIEFILE, $cookies);
 	
 	curl_exec($ch);
-	curl_setopt($ch, CURLOPT_URL, 'http://regis.agu.edu.vn/Default.aspx?page=xemlichthi');
+	curl_setopt($ch, CURLOPT_URL, 'http://regis.agu.edu.vn/Default.aspx?page=xemhocphi');
 
 	$data = curl_exec($ch);
 
@@ -68,20 +68,13 @@
 		$cols =$item->getElementsByTagName("tr");
 		foreach ($cols as $a) {
 			$cols =$a->getElementsByTagName("span");
-			if(empty($cols->item(1)->nodeValue))
+			if(empty($cols->item(7)->nodeValue))
 			{
-				$row=array('MMH'=>"",'TenMH'=>"",'TietBD'=>"",'SoTiet'=>"",'NgayThi'=>"1-1-1900",'PhongThi'=>'');
+				
 			}
 			else
 			{
-				
-				preg_match("/\d{1,2}\/\d{1,2}\/\d{4}/",$cols->item(6)->nodeValue,$match);
-				if($match==null){
-					exit("Error");
-				}
-				
-				$newDate = date("d-m-Y", strtotime(str_replace('/','-',$cols->item(6)->nodeValue)));
-				$row=array('MMH'=>$cols->item(1)->nodeValue,'TenMH'=>$cols->item(2)->nodeValue,'TietBD'=>$cols->item(7)->nodeValue,'SoTiet'=>$cols->item(8)->nodeValue,'PhongThi'=>$cols->item(9)->nodeValue,'NgayThi'=>$newDate);
+				$row=array('MMH'=>$cols->item(1)->nodeValue,'TenMH'=>$cols->item(2)->nodeValue,'STC'=>$cols->item(5)->nodeValue,'SoTien'=>$cols->item(7)->nodeValue);
 				$jsonArray[]=$row;
 			}
 			

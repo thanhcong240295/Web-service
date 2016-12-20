@@ -36,7 +36,7 @@
 	$viewstate = regexExtract($data,$regexViewstate,$regs,1);
 	$postData = '__VIEWSTATE='.rawurlencode($viewstate)
 				.'&'.$user.'=dpm135369'
-				.'&'.$pass.'=dinhcong'
+				.'&'.$pass.'=thanhdinh'
 				.'&'.$login.'=Đăng Nhập';
 
 	curl_setOpt($ch, CURLOPT_POST, false);
@@ -53,21 +53,21 @@
 
 	curl_setOpt($ch, CURLOPT_POST, false);    
 	$data = curl_exec($ch);
-
-	$kt = $data;
-
-	$s = "<html><head><title>Object moved</title></head><body>
-<h2>Object moved to <a href=".'"%2fDefault.aspx%3fpage%3ddangnhap"'.">here</a>.</h2>
-</body></html>";
-	
-	if(preg_match($s, $data))
-	{
-		echo "Thành Công";
-	}
-	else
-	{
-		echo "Thất Bại";
-	}
-
 	curl_close($ch);
+
+
+	$html=new DOMDocument();
+	$data = '<?xml encoding="utf-8" ?>' . $data;
+	libxml_use_internal_errors(true);
+	$html->loadHTML($data);
+	//echo $html->saveXML();
+	$finder = new DomXPath($html);
+	$arr=$finder->query("//*[contains(@class, 'infor-member')]");
+
+	foreach($arr as $item){
+		$cols =$item->getElementsByTagName("span");
+		$row=$cols->item(1)->nodeValue;
+		echo $row;
+	}
+
 ?>	

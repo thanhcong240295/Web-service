@@ -1,7 +1,7 @@
 <?php
 	header('Content-type: application/json');
 	//$id=$_GET["id"];
-	$url= 'http://regis.agu.edu.vn/default.aspx?page=thoikhoabieu&sta=1&id=DTH146740';
+	$url= 'http://regis.agu.edu.vn/default.aspx?page=thoikhoabieu&sta=1&id=DPM135370';
 
 	$eventTarget='__EVENTTARGET';       
 	$namHocHocKy='ctl00$ContentPlaceHolder1$ctl00$ddlChonNHHK';       
@@ -89,12 +89,22 @@
 		$thu=$cols->item(8)->nodeValue;	
 		$thu=intval($thu)-2;
 		$cals=$cols->item(13)->nodeValue;
+		if($cals == '')
+		{
+			$cals ='0';
+		}
 		$dates=array();
 		for($i=0;$i<strlen($cals);$i++){
 			if($cals[$i]!='-'){
 				$date=clone $beginDate;
-				$date->modify('+ '.$i.' weeks + '.$thu.' days');
-				array_push($dates,$date->format('d-m-Y'));			
+				if($thu >= 0)
+				{
+					$date->modify('+ '.$i.' weeks + '.$thu.' days');
+					array_push($dates,$date->format('d-m-Y'));
+				}		
+				elseif ($thu < 0 || $cals == '0') {
+					$dates = array('1-1-1990');
+				}
 			}
 		$row=array_merge($row,array('dates'=>$dates));
 		}

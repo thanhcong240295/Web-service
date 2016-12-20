@@ -36,7 +36,7 @@
 	$viewstate = regexExtract($data,$regexViewstate,$regs,1);
 	$postData = '__VIEWSTATE='.rawurlencode($viewstate)
 				.'&'.$user.'=dpm135369'
-				.'&'.$pass.'=dinhcong'
+				.'&'.$pass.'=thanhdinh'
 				.'&'.$login.'=Đăng Nhập';
 
 	curl_setOpt($ch, CURLOPT_POST, false);
@@ -65,9 +65,19 @@
 	$arr=$finder->query("//*[contains(@class, 'grid-view')]");
 	$jsonArray=array();
 	foreach($arr as $item){
-		$cols =$item->getElementsByTagName("span");
-		$row=array('MMH'=>$cols->item(1)->nodeValue,'TenMH'=>$cols->item(2)->nodeValue,'STC'=>$cols->item(3)->nodeValue,'NDH'=>$cols->item(5)->nodeValue,'DDH'=>$cols->item(7)->nodeValue);
-		$jsonArray[]=$row;
+		$cols =$item->getElementsByTagName("tr");
+		foreach ($cols as $a) {
+			$cols =$a->getElementsByTagName("span");
+			if(empty($cols->item(1)->nodeValue))
+			{
+
+			}
+			else
+			{
+				$row=array('MMH'=>$cols->item(1)->nodeValue,'TenMH'=>$cols->item(2)->nodeValue,'STC'=>$cols->item(3)->nodeValue,'NDH'=>$cols->item(4)->nodeValue,'DDH'=>$cols->item(7)->nodeValue);
+				$jsonArray[]=$row;
+			}
+		}
 	}
 	echo(json_encode($jsonArray));	
 ?>	
