@@ -1,9 +1,8 @@
 <?php
 	header('Content-type: application/json');
-	$mUser = $_POST["_user"];
-	$mPass = $_POST["_pass"];
-	$url = 'http://regis.agu.edu.vn/default.aspx?page=dangnhap';
-
+	$url= 'http://regis.agu.edu.vn/default.aspx?page=dangnhap';
+	//$mUser = $_POST["_user"];
+	//$mPass = $_POST["_pass"];
 	$user = 'ctl00$ContentPlaceHolder1$ctl00$txtTaiKhoa';
 	$pass = 'ctl00$ContentPlaceHolder1$ctl00$txtMatKhau';
 	$login = 'ctl00$ContentPlaceHolder1$ctl00$btnDangNhap';
@@ -37,10 +36,8 @@
 	$regs="";
 	$viewstate = regexExtract($data,$regexViewstate,$regs,1);
 	$postData = '__VIEWSTATE='.rawurlencode($viewstate)
-				.'&'.$user.'='.$mUser
-				.'&'.$pass.'='.$mPass
-				//.'&'.$user.'=dpm135369'
-				//.'&'.$pass.'=thanhdinh'
+				.'&'.$user.'=dpm135369'
+				.'&'.$pass.'=thanhdinh'
 				.'&'.$login.'=Đăng Nhập';
 
 	curl_setOpt($ch, CURLOPT_POST, false);
@@ -48,17 +45,17 @@
 	curl_setopt($ch, CURLOPT_URL, $url);   
 	curl_setopt($ch, CURLOPT_COOKIEJAR, $cookies); 
 	//curl_setopt($ch, CURLOPT_COOKIEFILE, $cookies);
-	curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSSIE 5.01; Windows NT 5.0)");
 	
 	curl_exec($ch);
-	curl_setopt($ch, CURLOPT_URL, 'http://regis.agu.edu.vn/Default.aspx?page=xemdiemthi');
+	curl_setopt($ch, CURLOPT_URL, 'http://regis.agu.edu.vn/default.aspx?page=thaydoittcn');
 
 	$data = curl_exec($ch);
 
 	curl_setOpt($ch, CURLOPT_POST, false);    
 	$data = curl_exec($ch);
-	curl_close($ch);
 
+	echo $data;	
+	curl_close($ch);
 
 	$html=new DOMDocument();
 	$data = '<?xml encoding="utf-8" ?>' . $data;
@@ -66,12 +63,24 @@
 	$html->loadHTML($data);
 	//echo $html->saveXML();
 	$finder = new DomXPath($html);
-	$arr=$finder->query("//*[contains(@class, 'infor-member')]");
-
+	$arr=$finder->query("//*[contains(@class, 'styl')]");
+	$jsonArray=array();
 	foreach($arr as $item){
-		$cols =$item->getElementsByTagName("span");
-		$row=$cols->item(1)->nodeValue;
-		echo $row;
+		$cols =$item->getElementsByTagName("tr");
+		foreach ($cols as $a) {
+			$cols =$a->getElementsByTagName("span");
+			if(empty($cols->item(7)->nodeValue))
+			{
+				
+			}
+			else
+			{
+				$row=array('TT'=>$cols->item(1)->nodeValue,'CN'=>$cols->item(2)->nodeValue);
+				$jsonArray[]=$row;
+			}
+			
+		}
+		
 	}
-
+	echo(json_encode($jsonArray));	
 ?>	

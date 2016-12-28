@@ -1,7 +1,9 @@
 <?php
 	header('Content-type: application/json');
 	//$id=$_GET["id"];
-	$url= 'http://regis.agu.edu.vn/default.aspx?page=thoikhoabieu&sta=1&id=DPM135370';
+	$mUser = $_POST["_user"];
+	//$mPass = $_POST["_pass"];
+	$url= 'http://regis.agu.edu.vn/default.aspx?page=thoikhoabieu&sta=1&id='.$mUser;
 
 	$eventTarget='__EVENTTARGET';       
 	$namHocHocKy='ctl00$ContentPlaceHolder1$ctl00$ddlChonNHHK';       
