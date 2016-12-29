@@ -8,7 +8,9 @@
 	$user = 'ctl00$ContentPlaceHolder1$ctl00$txtTaiKhoa';
 	$pass = 'ctl00$ContentPlaceHolder1$ctl00$txtMatKhau';
 	$login = 'ctl00$ContentPlaceHolder1$ctl00$btnDangNhap';
-	$all = 'ctl00$ContentPlaceHolder1$ctl00$txtChonHK';
+	$all = 'ctl00$ContentPlaceHolder1$ctl00$lnkChangeview';
+	$thongtin = 'ctl00$ContentPlaceHolder1$ctl00$txtChonHK';
+	$xem = 'ctl00$ContentPlaceHolder1$ctl00$btnChonHK';
 
 	$cookies = 'cookie.txt';
 
@@ -48,10 +50,16 @@
 	curl_setopt($ch, CURLOPT_COOKIEJAR, $cookies); 
 	//curl_setopt($ch, CURLOPT_COOKIEFILE, $cookies);
 	
+	$postData1 = '__VIEWSTATE='.rawurlencode($viewstate)
+				.'&'.$all.'=Xem tất cả học kì ';
+
 	curl_exec($ch);
-	curl_setOpt($ch, CURLOPT_POST, false);
 	curl_setopt($ch, CURLOPT_URL, 'http://regis.agu.edu.vn/Default.aspx?page=xemdiemthi');
-	curl_setopt($ch, CURLOPT_COOKIEJAR, $cookies); 
+	$data = curl_exec($ch);
+	curl_setOpt($ch, CURLOPT_POST, false);
+	//curl_setopt($ch, CURLOPT_POSTFIELDS, $postData1);
+	//curl_setopt($ch, CURLOPT_URL, 'http://regis.agu.edu.vn/Default.aspx?page=xemdiemthi');
+	//curl_setopt($ch, CURLOPT_COOKIEJAR, $cookies); 
 	
 	$data = curl_exec($ch);
 

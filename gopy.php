@@ -1,12 +1,17 @@
 <?php
-	header('Content-type: application/json');
+	//header('Content-type: application/json');
+header('Content-type: text');
 	$url= 'http://regis.agu.edu.vn/default.aspx?page=dangnhap';
 	$mUser = $_POST["_user"];
 	$mPass = $_POST["_pass"];
+	$mChude = $_POST["_chude"];
+	$mNoidung = $_POST["_noidung"];
 	$user = 'ctl00$ContentPlaceHolder1$ctl00$txtTaiKhoa';
 	$pass = 'ctl00$ContentPlaceHolder1$ctl00$txtMatKhau';
 	$login = 'ctl00$ContentPlaceHolder1$ctl00$btnDangNhap';
-	$tk = 'ctl00_Header1_ucLogout_lblNguoiDung';
+	$chude = 'ctl00$ContentPlaceHolder1$ctl00$txtSubject';
+	$noidung = 'ctl00$ContentPlaceHolder1$ctl00$txtContent';
+	$gui = 'ctl00$ContentPlaceHolder1$ctl00$btnSave';
 
 	$cookies = 'cookie.txt';
 
@@ -47,36 +52,21 @@
 	//curl_setopt($ch, CURLOPT_COOKIEFILE, $cookies);
 	
 	curl_exec($ch);
-	curl_setopt($ch, CURLOPT_URL, 'http://regis.agu.edu.vn/Default.aspx?page=xemdiemthi');
+	curl_setopt($ch, CURLOPT_URL, 'http://regis.agu.edu.vn/Default.aspx?page=ykiensinhvien');
 
 	$data = curl_exec($ch);
 
-	curl_setOpt($ch, CURLOPT_POST, false);    
+	$postData1 = '__VIEWSTATE='.rawurlencode($viewstate)
+				.'&'.$chude.'='.$mChude
+				.'&'.$noidung.'='.$mNoidung
+				.'&'.$gui.'=Gửi';
+
+	curl_setOpt($ch, CURLOPT_POST, false);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $postData1);
+	curl_setopt($ch, CURLOPT_URL, 'http://regis.agu.edu.vn/Default.aspx?page=ykiensinhvien');
+	curl_setopt($ch, CURLOPT_COOKIEJAR, $cookies); 
 	$data = curl_exec($ch);
 
-	//echo $data;	
+	echo $data;	
 	curl_close($ch);
-
-	$html=new DOMDocument();
-	$data = '<?xml encoding="utf-8" ?>' . $data;
-	libxml_use_internal_errors(true);
-	$html->loadHTML($data);
-	//echo $html->saveXML();
-	$finder = new DomXPath($html);
-	$arr=$finder->query("//*[contains(@class, 'center')]");
-	$jsonArray=array();
-	foreach($arr as $item){
-		$cols =$item->getElementsByTagName("tr");
-		foreach ($cols as $a) {
-			$cols =$a->getElementsByTagName("span");
-			
-			{
-				$row=array('TT'=>$cols->item(0)->nodeValue, 'CN'=>$cols->item(1)->nodeValue);
-				
-			}
-			$jsonArray[]=$row;
-		}
-		
-	}
-	echo(json_encode($jsonArray));	
 ?>	
